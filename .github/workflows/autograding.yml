@@ -11,17 +11,21 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all branches
 
-      - name: Check for quote.txt
+      - name: Check for answer.txt file
         run: |
-          if [ ! -f quote.txt ]; then
-              echo "quote.txt not found!"
+          if [ ! -f answer.txt ]; then
+              echo "answer.txt not found!"
               exit 1
           fi
 
-      - name: Check for branches
+      - name: Check for branches other than main
         run: |
-          # Get a list of branches excluding the main branch
-          branches=$(git branch | grep -v "main")
+          # Ensure we're in the correct branch and fetch all branches
+          git fetch --all
+
+          # List all local branches except main
+          branches=$(git branch --format="%(refname:short)" | grep -v "main" || true)
+          
           if [ -n "$branches" ]; then
               echo "There are still branches other than 'main':"
               echo "$branches"
@@ -30,14 +34,14 @@ jobs:
               echo "Only the main branch exists."
           fi
 
-      - name: Check the contents of quote.txt
+      - name: Check the contents of answer.txt
         run: |
           expected_quote="If you’re not using version control system, you’re gambling with your code."
-          actual_quote=$(cat quote.txt)
+          actual_quote=$(cat answer.txt)
           if [ "$actual_quote" != "$expected_quote" ]; then
-              echo "quote.txt does not contain the expected quote."
+              echo "answer.txt does not contain the expected quote."
               echo "Expected: $expected_quote"
               echo "Got: $actual_quote"
               exit 1
           fi
-          echo "Content of quote.txt is correct."
+          echo "Content of answer.txt is correct."
