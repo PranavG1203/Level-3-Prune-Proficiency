@@ -32,7 +32,7 @@ jobs:
 
       - name: Check the contents of quote.txt
         run: |
-          expected_quote="If you’re not using version control, you’re gambling with your code."
+          expected_quote="If you’re not using version control system, you’re gambling with your code."
           actual_quote=$(cat quote.txt)
           if [ "$actual_quote" != "$expected_quote" ]; then
               echo "quote.txt does not contain the expected quote."
