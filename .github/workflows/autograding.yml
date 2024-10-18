@@ -1,0 +1,43 @@
+name: Autograding
+
+on: [push]
+
+jobs:
+  autograde:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all branches
+
+      - name: Check for quote.txt
+        run: |
+          if [ ! -f quote.txt ]; then
+              echo "quote.txt not found!"
+              exit 1
+          fi
+
+      - name: Check for branches
+        run: |
+          # Get a list of branches excluding the main branch
+          branches=$(git branch | grep -v "main")
+          if [ -n "$branches" ]; then
+              echo "There are still branches other than 'main':"
+              echo "$branches"
+              exit 1
+          else
+              echo "Only the main branch exists."
+          fi
+
+      - name: Check the contents of quote.txt
+        run: |
+          expected_quote="If you’re not using version control, you’re gambling with your code."
+          actual_quote=$(cat quote.txt)
+          if [ "$actual_quote" != "$expected_quote" ]; then
+              echo "quote.txt does not contain the expected quote."
+              echo "Expected: $expected_quote"
+              echo "Got: $actual_quote"
+              exit 1
+          fi
+          echo "Content of quote.txt is correct."
