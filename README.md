@@ -2,9 +2,7 @@
 
 Objective
 
->I hold your changes, both big and small,
->I connect them together, one and all.
->When it’s time to clean up, I can be cut,
->Leaving behind a single, unified strut.
->What am I?
-
+>I am a collection of thoughts, split in two,  
+>Gather my parts, and I’ll reveal something new.  
+>In this quest, branches hold fragments of my say,  
+>Combine them together and clear the way.
