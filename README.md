@@ -2,7 +2,9 @@
 
 Objective
 
->I am a collection of thoughts, split in two,  
->Gather my parts, and I’ll reveal something new.  
->In this quest, branches hold fragments of my say,  
->Combine them together and clear the way.
+>I am a tale told in two,
+>A subtle change from one to you.
+>Look between branches, find what’s new,
+>Store the difference, the task is through.
+
+#### Note: Submit your answer in `answer.txt`
