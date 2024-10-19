@@ -15,7 +15,6 @@ jobs:
       - name: Check for answer.txt
         run: |
           if [ ! -f answer.txt ]; then
-              echo "answer.txt not found!"
               exit 1
           fi
 
@@ -27,15 +26,11 @@ jobs:
           # Calculate the SHA-256 hash of the content
           actual_sha256=$(echo -n "$content" | sha256sum | awk '{ print $1 }')
 
-          # Expected SHA-256 hash for '2K24!!!'
           expected_sha256="d97a3833a90ab3318b9530407ceb9693ef31651cf5f7bcd4e88a407a6b05fd81"
 
           # Compare the actual hash with the expected hash
           if [ "$actual_sha256" != "$expected_sha256" ]; then
-              echo "SHA256 hash mismatch for answer.txt."
-              echo "Expected: $expected_sha256"
-              echo "Got: $actual_sha256"
               exit 1
           else
-              echo "SHA256 hash is correct."
+              echo "Pass!"
           fi
