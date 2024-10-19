@@ -5,43 +5,37 @@ on: [push]
 jobs:
   autograde:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all branches
+          fetch-depth: 0  # Fetch full history to ensure all commits are available
 
-      - name: Check for answer.txt file
+      - name: Check for answer.txt
         run: |
           if [ ! -f answer.txt ]; then
               echo "answer.txt not found!"
               exit 1
           fi
 
-      - name: Check for branches other than main
+      - name: Check SHA-256 hash of the content
         run: |
-          # Ensure we're in the correct branch and fetch all branches
-          git fetch --all
+          # Extract content, removing all spaces and newlines
+          content=$(tr -d '[:space:]' < answer.txt)
 
-          # List all local branches except main
-          branches=$(git branch --format="%(refname:short)" | grep -v "main" || true)
-          
-          if [ -n "$branches" ]; then
-              echo "There are still branches other than 'main':"
-              echo "$branches"
+          # Calculate the SHA-256 hash of the content
+          actual_sha256=$(echo -n "$content" | sha256sum | awk '{ print $1 }')
+
+          # Expected SHA-256 hash for '2K24!!!'
+          expected_sha256="d97a3833a90ab3318b9530407ceb9693ef31651cf5f7bcd4e88a407a6b05fd81"
+
+          # Compare the actual hash with the expected hash
+          if [ "$actual_sha256" != "$expected_sha256" ]; then
+              echo "SHA256 hash mismatch for answer.txt."
+              echo "Expected: $expected_sha256"
+              echo "Got: $actual_sha256"
               exit 1
           else
-              echo "Only the main branch exists."
+              echo "SHA256 hash is correct."
           fi
-
-      - name: Check the contents of answer.txt
-        run: |
-          expected_quote="If you’re not using version control system, you’re gambling with your code."
-          actual_quote=$(cat answer.txt)
-          if [ "$actual_quote" != "$expected_quote" ]; then
-              echo "answer.txt does not contain the expected quote."
-              echo "Expected: $expected_quote"
-              echo "Got: $actual_quote"
-              exit 1
-          fi
-          echo "Content of answer.txt is correct."
