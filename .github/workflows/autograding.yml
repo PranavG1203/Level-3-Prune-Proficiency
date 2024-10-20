@@ -1,36 +1,30 @@
-name: Autograding
-
-on: [push]
-
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
 jobs:
-  autograde:
+  run-autograding-tests:
     runs-on: ubuntu-latest
-
+    if: github.actor != 'github-classroom[bot]'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Fetch full history to ensure all commits are available
-
-      - name: Check for answer.txt
-        run: |
-          if [ ! -f answer.txt ]; then
-              exit 1
-          fi
-
-      - name: Check SHA-256 hash of the content
-        run: |
-          # Extract content, removing all spaces and newlines
-          content=$(tr -d '[:space:]' < answer.txt)
-
-          # Calculate the SHA-256 hash of the content
-          actual_sha256=$(echo -n "$content" | sha256sum | awk '{ print $1 }')
-
-          expected_sha256="d97a3833a90ab3318b9530407ceb9693ef31651cf5f7bcd4e88a407a6b05fd81"
-
-          # Compare the actual hash with the expected hash
-          if [ "$actual_sha256" != "$expected_sha256" ]; then
-              exit 1
-          else
-              echo "Pass!"
-          fi
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Flag Check
+      id: flag-check
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Flag Check
+        setup-command: ''
+        command: "bash script.sh"
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        FLAG-CHECK_RESULTS: "${{steps.flag-check.outputs.result}}"
+      with:
+        runners: flag-check
